@@ -30,21 +30,25 @@ const P5Sketch = () => {
 
         p.colours = [
             {
+                id: 'colour1',
                 r: 179,
                 g: 54,
                 b: 160,
             },
             {
+                id: 'colour2',
                 r: 160,
                 g: 179,
                 b: 54,
             },
             {
+                id: 'colour3',
                 r: 54,
                 g: 179,
                 b: 92,
             },
             {
+                id: 'colour4',
                 r: 179,
                 g: 64,
                 b: 54,
@@ -91,9 +95,13 @@ const P5Sketch = () => {
         
         p.circlesToDraw1 = [];
 
-        p.circlesToDraw2 = [];
+        p.squareObjects = [];
 
-        p.squaresToDraw = [];
+        p.squaresToDraw1 = [];
+
+        p.squaresToDraw2 = [];
+
+        p.squaresToDraw3 = [];
 
         p.loadObjectArrays = () => {
             let iterations = parseInt(p.height / p.squareSize + 1) * 20;
@@ -117,15 +125,17 @@ const P5Sketch = () => {
                     );
                 }
 
-                p.squaresToDraw.push(
+                p.squareObjects.push(
                     {
+                        key: colour.id,
                         x: xpos,
                         y: ypos, 
                         colour: p.color(colour.r, colour.g, colour.b),
                     }
                 );
-            }
-                
+            }   
+
+            p.squareObjects = ShuffleArray(p.squareObjects);
         }
 
         p.initialCircleDivider = 24;
@@ -145,22 +155,48 @@ const P5Sketch = () => {
             }
         };
 
-         p.executeCueSet2 = (vars) => {
-            // const { currentCue, midi } = vars;
-            // if (!p.cueSet2Completed.includes(currentCue)) {
-            //     p.cueSet2Completed.push(currentCue);
-            // }
+        p.executeCueSet2 = (vars) => {
+            const { currentCue } = vars, 
+                notesPerLoop = 36,
+                squaresPerCue = parseInt(p.squareObjects.length / notesPerLoop),
+                modulo = currentCue % notesPerLoop;
+            if (!p.cueSet2Completed.includes(currentCue)) {
+                p.cueSet2Completed.push(currentCue);
+                const start = (modulo - 1) * squaresPerCue;
+                const end = modulo === 0 ? p.squareObjects.length : start + squaresPerCue;
+                if(currentCue <= notesPerLoop){
+                    console.log(modulo);
+                    p.squaresToDraw1 = p.squaresToDraw1.concat(p.squareObjects.slice(start, end))
+                }
+                else if(currentCue > notesPerLoop && currentCue <= notesPerLoop * 2){
+                    p.squaresToDraw2 = p.squaresToDraw2.concat(p.squareObjects.slice(start, end))
+                }
+                else if(currentCue > notesPerLoop * 2){
+                    p.squaresToDraw3 = p.squaresToDraw3.concat(p.squareObjects.slice(start, end))
+                }
+
+                if (modulo === 0) {
+                    p.squareObjects = ShuffleArray(p.squareObjects);
+                }
+            }
         };
 
-        //https://www.sessions.edu/color-calculator/
         p.draw = () => {
             p.background(255);
             p.circlesToDraw1.forEach(circle => {
                 p.drawCirle(circle);
             });
 
-            p.squaresToDraw.forEach(square => {
-                p.drawSquare(square);
+            p.squaresToDraw1.forEach(square => {
+                p.drawSquare(square, 2);
+            });
+
+            p.squaresToDraw2.forEach(square => {
+                p.drawSquare(square, 1);
+            });
+            
+            p.squaresToDraw3.forEach(square => {
+                p.drawSquare(square, 3);
             });
         };
 
@@ -178,25 +214,35 @@ const P5Sketch = () => {
             }
         };
 
-        p.drawSquare = (square) => {
+        p.drawSquare = (square, squareOption) => {
             const { x, y, colour } = square;
+            p.noStroke();
+            p.noFill();
             p.push();
             p.translate(x, y);
-            p.noStroke();
             p.rotate(45);
-            colour.setAlpha(63);
-            p.fill(colour);
-            p.rect(0, 0, p.squareSize, p.squareSize);
-            p.noFill();
-            colour.setAlpha(127);
-            p.stroke(colour);
-            p.rect(0, 0, p.squareSize / 4, p.squareSize / 4);
-            colour.setAlpha(181);
-            p.stroke(colour);
-            p.rect(0, 0, p.squareSize / 2, p.squareSize / 2);
-            colour.setAlpha(255);
-            p.stroke(colour);
-            p.rect(0, 0, p.squareSize, p.squareSize);
+            switch (squareOption) {
+                case 2:
+                    colour.setAlpha(127);
+                    p.stroke(colour);
+                    p.rect(0, 0, p.squareSize / 4, p.squareSize / 4);
+                    colour.setAlpha(181);
+                    p.stroke(colour);
+                    p.rect(0, 0, p.squareSize / 2, p.squareSize / 2);
+                    break;
+                case 3:
+                    colour.setAlpha(63);
+                    p.fill(colour);
+                    p.rect(0, 0, p.squareSize, p.squareSize);
+                    break;
+                default:
+                    colour.setAlpha(255);
+                    p.stroke(colour);
+                    colour.setAlpha(15);
+                    p.fill(colour);
+                    p.rect(0, 0, p.squareSize, p.squareSize);       
+                    break;
+            }
             p.pop();
         }
 
