@@ -127,7 +127,7 @@ const P5Sketch = () => {
 
                 p.squareObjects.push(
                     {
-                        key: colour.id,
+                        key: colour.r + '-' + colour.g + '-' + colour.b,
                         x: xpos,
                         y: ypos, 
                         colour: p.color(colour.r, colour.g, colour.b),
@@ -135,44 +135,65 @@ const P5Sketch = () => {
                 );
             }   
 
+            p.circleObjects = ShuffleArray(p.circleObjects);
             p.squareObjects = ShuffleArray(p.squareObjects);
         }
 
-        p.initialCircleDivider = 24;
+        p.sqaureDivider = 32;
 
         p.executeCueSet1 = (vars) => {
             const { currentCue, midi } = vars;
             
             if (!p.cueSet1Completed.includes(currentCue)) {
                 p.cueSet1Completed.push(currentCue);
-                if(currentCue % 20 === 1 && currentCue !== 1 & currentCue < 81){
-                    p.initialCircleDivider = p.initialCircleDivider / 2;
+                // console.log(currentCue);
+                // console.log(vars.time);
+                switch (currentCue) {
+                    case 21:
+                        p.sqaureDivider = 16;
+                        break;
+                    case 47:
+                        p.sqaureDivider = 8;
+                        break;
+                    case 67:
+                        p.sqaureDivider = 4;
+                        break;
+                    case 93:
+                        p.sqaureDivider = 2;
+                        break;
+                    case 193:
+                        p.sqaureDivider = 1;
+                        break;
+                    default:
+                        break;
                 }
                 const keys = midi === 36 ? ['179-54-160', '54-179-92'] : midi === 37 ? ['160-179-54', '179-64-54'] : [];
-                p.circlesToDraw1 = p.circleObjects.filter(circle => {
-                    return keys.includes(circle.key);
+                p.squaresToDraw1 = currentCue === cueSet1.length ? p.squareObjects : p.squareObjects.filter(square => {
+                    return keys.includes(square.key);
                 })
             }
         };
 
         p.executeCueSet2 = (vars) => {
             const { currentCue } = vars, 
-                notesPerLoop = 36,
-                squaresPerCue = parseInt(p.squareObjects.length / notesPerLoop),
-                modulo = currentCue % notesPerLoop;
+                notesPerLoop = currentCue <= 36 ? 36 : 38,
+                squaresPerCue = parseInt(p.squareObjects.length / notesPerLoop);
+            let modulo = currentCue % notesPerLoop;
+            if(currentCue > 36) {
+                modulo = (currentCue + 2) % notesPerLoop;
+            }
             if (!p.cueSet2Completed.includes(currentCue)) {
                 p.cueSet2Completed.push(currentCue);
-                const start = (modulo - 1) * squaresPerCue;
+                const start = modulo > 0 ? (modulo - 1) * squaresPerCue : (notesPerLoop - 1) * squaresPerCue;
                 const end = modulo === 0 ? p.squareObjects.length : start + squaresPerCue;
-                if(currentCue <= notesPerLoop){
-                    console.log(modulo);
-                    p.squaresToDraw1 = p.squaresToDraw1.concat(p.squareObjects.slice(start, end))
-                }
-                else if(currentCue > notesPerLoop && currentCue <= notesPerLoop * 2){
+                if(currentCue <= 36){
                     p.squaresToDraw2 = p.squaresToDraw2.concat(p.squareObjects.slice(start, end))
                 }
-                else if(currentCue > notesPerLoop * 2){
+                else if(currentCue > 74){
                     p.squaresToDraw3 = p.squaresToDraw3.concat(p.squareObjects.slice(start, end))
+                }
+                else if(currentCue > 36 && currentCue <= 74){
+                    p.circlesToDraw1 = p.circlesToDraw1.concat(p.circleObjects.slice(start, end))
                 }
 
                 if (modulo === 0) {
@@ -203,12 +224,12 @@ const P5Sketch = () => {
         p.drawCirle = (circle) => {
             const colour = circle.colour;
             let alpha = 64;
-            let divider = p.initialCircleDivider;
+            let divider = 3;
             for(let i = 0; i < 3; i++){
                 colour.setAlpha(alpha - 1);
                 p.noStroke();
                 p.fill(colour);
-                p.ellipse(circle.x + p.squareSize/2, circle.y  + p.squareSize/2, p.squareSize/divider, p.squareSize/divider);
+                p.ellipse(circle.x + p.squareSize/2, circle.y  + p.squareSize/2, p.squareSize / divider, p.squareSize / divider);
                 alpha = alpha * 2;
                 divider = divider * 2;
             }
@@ -225,10 +246,10 @@ const P5Sketch = () => {
                 case 2:
                     colour.setAlpha(127);
                     p.stroke(colour);
-                    p.rect(0, 0, p.squareSize / 4, p.squareSize / 4);
+                    p.rect(0, 0, p.squareSize / 4 / p.sqaureDivider, p.squareSize / 4 / p.sqaureDivider);
                     colour.setAlpha(181);
                     p.stroke(colour);
-                    p.rect(0, 0, p.squareSize / 2, p.squareSize / 2);
+                    p.rect(0, 0, p.squareSize / 2 / p.sqaureDivider, p.squareSize / 2 / p.sqaureDivider);
                     break;
                 case 3:
                     colour.setAlpha(63);
@@ -238,8 +259,6 @@ const P5Sketch = () => {
                 default:
                     colour.setAlpha(255);
                     p.stroke(colour);
-                    colour.setAlpha(15);
-                    p.fill(colour);
                     p.rect(0, 0, p.squareSize, p.squareSize);       
                     break;
             }

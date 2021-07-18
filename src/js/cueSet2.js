@@ -630,8 +630,8 @@ const cueSet2 = [
           "velocity": 0.7874015748031497
         },
         {
-          "duration": 0.612244000000004,
-          "durationTicks": 15360,
+          "duration": 0.306122000000002,
+          "durationTicks": 7680,
           "midi": 64,
           "name": "E4",
           "ticks": 952320,
@@ -639,12 +639,30 @@ const cueSet2 = [
           "velocity": 0.7874015748031497
         },
         {
-          "duration": 0.6122439999999969,
-          "durationTicks": 15360,
+          "duration": 0.306122000000002,
+          "durationTicks": 7680,
+          "midi": 64,
+          "name": "E4",
+          "ticks": 960000,
+          "time": 38.26525,
+          "velocity": 0.7874015748031497
+        },
+        {
+          "duration": 0.3061219999999949,
+          "durationTicks": 7680,
           "midi": 64,
           "name": "E4",
           "ticks": 967680,
           "time": 38.571372000000004,
+          "velocity": 0.7874015748031497
+        },
+        {
+          "duration": 0.306122000000002,
+          "durationTicks": 7680,
+          "midi": 64,
+          "name": "E4",
+          "ticks": 975360,
+          "time": 38.877494,
           "velocity": 0.7874015748031497
         },
         {
@@ -954,8 +972,8 @@ const cueSet2 = [
           "velocity": 0.7874015748031497
         },
         {
-          "duration": 0.612244000000004,
-          "durationTicks": 15360,
+          "duration": 0.306122000000002,
+          "durationTicks": 7680,
           "midi": 64,
           "name": "E4",
           "ticks": 1443840,
@@ -963,12 +981,30 @@ const cueSet2 = [
           "velocity": 0.7874015748031497
         },
         {
-          "duration": 0.6122439999999969,
-          "durationTicks": 15360,
+          "duration": 0.306122000000002,
+          "durationTicks": 7680,
+          "midi": 64,
+          "name": "E4",
+          "ticks": 1451520,
+          "time": 57.857058,
+          "velocity": 0.7874015748031497
+        },
+        {
+          "duration": 0.3061219999999949,
+          "durationTicks": 7680,
           "midi": 64,
           "name": "E4",
           "ticks": 1459200,
           "time": 58.163180000000004,
+          "velocity": 0.7874015748031497
+        },
+        {
+          "duration": 0.306122000000002,
+          "durationTicks": 7680,
+          "midi": 64,
+          "name": "E4",
+          "ticks": 1466880,
+          "time": 58.469302,
           "velocity": 0.7874015748031497
         }
 ];
